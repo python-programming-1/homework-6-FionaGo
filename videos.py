@@ -42,6 +42,19 @@ def get_most_popular_and_least_popular_channel(data):
     most_popular_and_least_popular_channel = {'most_popular_channel': None, 'least_popular_channel': None, 'most_pop_num_views': None,
                                               'least_pop_num_views': None}
 
+    ## FIONA NOTES:
+    ## need to figure out which channel has the best views, use a dictionary
+    ## get thru the
+    ## min and max views, and save it in a dictionary as the post popular channel or not
+    ## reference Homework in the bar_list, bar_dictionary (line 14, 15)
+    #### for loop for the item in data[1:]:
+    #### incremental the value -> refer to the my_max(dictionary):
+
+
+    channel_dictionary = {}
+    for entry in data:
+        channel_dictionary[entry['channel_title']] += # get the views and save
+
     return most_popular_and_least_popular_channel
 
 
