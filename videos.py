@@ -1,6 +1,6 @@
 import csv
 import pprint
-
+import pandas as pd
 
 def get_video_data():
     """this function reads from a .csv file and converts the data into a list of dictionaries.
@@ -37,43 +37,84 @@ def print_data(data):
         pprint.pprint(entry)
 
 
+def my_max(dictionary):
+
+    return_dict = {'channel_title': None, 'metric': 0}
+    for k,v in dictionary.items():
+        if int(v) > return_dict['metric']:
+            return_dict['channel_title'] = k
+            return_dict['metric'] = int(v)
+    return return_dict
+
+
+def my_min(dictionary):
+
+    return_dict = {'channel_title': None, 'metric': 0}
+    for k,v in dictionary.items():
+        if int(v) < return_dict['metric']:
+            return_dict['channel_title'] = k
+            return_dict['metric'] = int(v)
+    return return_dict
+
+
+
 def get_most_popular_and_least_popular_channel(data):
     """ fill in the Nones for the dictionary below using the vid data """
-    most_popular_and_least_popular_channel = {'most_popular_channel': None, 'least_popular_channel': None, 'most_pop_num_views': None,
+    most_popular_and_least_popular_channel = {'most_popular_channel': None,
+                                              'least_popular_channel': None,
+                                              'most_pop_num_views': None,
                                               'least_pop_num_views': None}
 
-    ## FIONA NOTES:
-    ## need to figure out which channel has the best views, use a dictionary
-    ## get thru the
-    ## min and max views, and save it in a dictionary as the post popular channel or not
-    ## reference Homework in the bar_list, bar_dictionary (line 14, 15)
-    #### for loop for the item in data[1:]:
-    #### incremental the value -> refer to the my_max(dictionary):
+    aggregate_channel = {}
+    for item in data[1:]:
+        aggregate_channel.setdefault(item['channel_title'], 0)
+        aggregate_channel[item['channel_title']] += int(item['views'])
 
+    most_popular_channel_dict = my_max(aggregate_channel)
+    least_popular_channel_dict = my_min(aggregate_channel)
 
-    channel_dictionary = {}
-    for entry in data:
-        channel_dictionary[entry['channel_title']] += # get the views and save
+    most_popular_and_least_popular_channel['most_popular_channel'] = most_popular_channel_dict['channel_title']
+    most_popular_and_least_popular_channel['most_pop_num_views'] = most_popular_channel_dict['metric']
+    most_popular_and_least_popular_channel['least_popular_channel'] = least_popular_channel_dict['channel_title']
+    most_popular_and_least_popular_channel['least_pop_num_views'] = least_popular_channel_dict['metric']
 
     return most_popular_and_least_popular_channel
+
 
 
 def get_most_liked_and_disliked_channel(data):
     """ fill in the Nones for the dictionary below using the bar party data """
 
-    most_liked_and_disliked_channel = {'most_liked_channel': None, 'num_likes': None, 'most_disliked_channel': None, 'num_dislikes': None}
+    most_liked_and_disliked_channel = {'most_liked_channel': None,
+                                        'num_likes': None,
+                                        'most_disliked_channel': None,
+                                        'num_dislikes': None}
+
+    aggregate_channel_likes = {}
+    aggregate_channel_dislikes = {}
+
+    for item in data[1:]:
+        aggregate_channel_likes.setdefault(item['channel_title'], 0)
+        aggregate_channel_likes[item['channel_title']] += int(item['likes'])
+
+        aggregate_channel_dislikes.setdefault(item['channel_title'], 0)
+        aggregate_channel_dislikes[item['channel_title']] += int(item['dislikes'])
+
+    most_liked_channel_dict = my_max(aggregate_channel_likes)
+    most_liked_and_disliked_channel['most_liked_channel'] = most_liked_channel_dict['channel_title']
+    most_liked_and_disliked_channel['num_likes'] = most_liked_channel_dict['metric']
+
+    most_disliked_channel_dict = my_max(aggregate_channel_dislikes)
+    most_liked_and_disliked_channel['most_disliked_channel'] = most_disliked_channel_dict['channel_title']
+    most_liked_and_disliked_channel['num_dislikes'] = most_disliked_channel_dict['metric']
 
     return most_liked_and_disliked_channel
 
 
+
 if __name__ == '__main__':
     vid_data = get_video_data()
-
-    # uncomment the line below to see what the data looks like
-    print_data(vid_data)
-
     popularity_metrics = get_most_popular_and_least_popular_channel(vid_data)
-
     like_dislike_metrics = get_most_liked_and_disliked_channel(vid_data)
 
     print('Popularity Metrics: {}'.format(popularity_metrics))
